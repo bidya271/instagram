@@ -1,0 +1,27 @@
+persona:
+  name: "Bidya"
+  role: "Founder"
+
+products:
+  tracksub:
+    name: "TrackSub"
+    url: "https://tracksub.app"
+    ios_url: "https://apps.apple.com/in/app/tracksubapp/id6757342390"
+    pricing: "Free for up to 5 apps, $1/mo for unlimited"
+    core_problem: "Forgotten subscriptions and painful manual entry"
+    killer_feature: "AI Screenshot Import (no bank credentials needed) + 3-day renewal alerts + 1-click cancel links"
+    goal: "Get user to upload their first statement screenshot or install iOS app"
+
+  feelsright:
+    name: "FeelsRight"
+    url: "https://feelsright.me"
+    ios_url: "https://apps.apple.com/us/app/feelsright/id6783052603"
+    pricing: "100% Free"
+    core_problem: "Emotional drift and repetitive 'how was your day' texting in couples & close relationships"
+    killer_feature: "30-second daily emotional check-in showing emotional shape without scores, streaks, or pressure"
+    goal: "Get couple/friends to install and invite their person"
+
+pipeline:
+  require_approval: true
+  max_daily_pushes: 15
+  heartbeat_minutes: 30

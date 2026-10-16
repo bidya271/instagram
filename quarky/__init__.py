@@ -1,0 +1,3 @@
+"""
+Quarky package initialization.
+"""
