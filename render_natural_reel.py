@@ -39,7 +39,7 @@ REELS_DATA = {
         "footage": FOOTAGE_DIR / "walking_rain_night_street_39611009.mp4",
         "bgm": AUDIO_DIR / "snowfall.mp3",
         "bgm_ss": "00:00:20",       # Jump right to the famous Snowfall synth drop
-        "bgm_volume": 0.90,         # Prominent, clearly audible background music
+        "bgm_volume": 0.09,         # Calibrated ambient bed (-34 dB, 19 dB below speech)
         "voice": "en-US-AndrewMultilingualNeural",
         "voice_rate": "+0%",
         "script": "The most dangerous person in the room is never the one shouting. Insecurity is loud. It needs an audience. But true power is quiet. It watches, listens, and decides without ever needing to perform.",
@@ -65,8 +65,8 @@ Save this for the next time you're tempted to speak when you should be observing
         "book": "Status: The Currency of Envy",
         "footage": FOOTAGE_DIR / "dark_lake_mist_solitude_35199993.mp4",
         "bgm": AUDIO_DIR / "solitude.mp3",
-        "bgm_ss": "00:00:00",       # Immediate, majestic orchestral piano and synth
-        "bgm_volume": 0.85,         # Prominent, clearly audible background music
+        "bgm_ss": "00:00:00",       # Immediate orchestral piano and synth
+        "bgm_volume": 0.10,         # Calibrated ambient bed (-35 dB, 20 dB below speech)
         "voice": "en-US-AndrewMultilingualNeural",
         "voice_rate": "+0%",
         "script": "Notice how people love giving you advice when you're struggling, but grow strangely quiet the moment you succeed? Learn to celebrate your wins in silence. Protect your peace from rooms that only loved you when you were small.",
@@ -122,8 +122,8 @@ def render_natural_reel(item):
     dur = round(voice_dur + 1.8, 1)
     print(f"    [+] Voice duration: {voice_dur:.2f}s | Total Reel Duration: {dur:.1f}s")
 
-    # 2. Master Audio: Resample + Stereo Format + Prominent BGM + Loudnorm (-14 LUFS)
-    print("    [2/6] Mixing voice with prominent, clearly audible music (loudnorm -14 LUFS)...")
+    # 2. Master Audio: Vocal Clarity EQ + Voice Loudnorm (-14 LUFS) + Ambient BGM Bed
+    print("    [2/6] Mixing voice with calibrated ambient music (voice @ -14 LUFS, music @ -34 dB)...")
     audio_file = assets_dir / "audio.mp3"
     subprocess.run([
         "ffmpeg", "-y",
@@ -132,11 +132,10 @@ def render_natural_reel(item):
         "-t", str(dur),
         "-i", str(item["bgm"]),
         "-filter_complex",
-        f"[0:a]aresample=48000,aformat=channel_layouts=stereo,volume=1.05[vce];"
-        f"[1:a]aresample=48000,aformat=channel_layouts=stereo,volume={item['bgm_volume']},"
-        f"afade=t=in:st=0:d=0.2,afade=t=out:st={dur-1.8}:d=1.8[bgm];"
-        f"[vce][bgm]amix=inputs=2:duration=longest:normalize=0[mixed];"
-        f"[mixed]loudnorm=I=-14:TP=-1.0:LRA=7[aout]",
+        f"[0:a]aresample=48000,aformat=channel_layouts=stereo,highpass=f=80,equalizer=f=3000:width_type=h:width=1500:g=3.0,loudnorm=I=-14:TP=-1.5:LRA=7[vce];"
+        f"[1:a]aresample=48000,aformat=channel_layouts=stereo,equalizer=f=2500:width_type=h:width=2000:g=-4.0,volume={item['bgm_volume']},"
+        f"afade=t=in:st=0:d=0.3,afade=t=out:st={dur-1.8}:d=1.8[bgm];"
+        f"[vce][bgm]amix=inputs=2:duration=longest:normalize=0[aout]",
         "-map", "[aout]",
         "-t", str(dur),
         "-c:a", "mp3", "-b:a", "192k",
@@ -269,6 +268,9 @@ def render_natural_reel(item):
     subprocess.run([
         "ffmpeg", "-y",
         "-i", str(work_dir / "raw_render.mp4"),
+        "-i", str(audio_file),
+        "-map", "0:v:0",
+        "-map", "1:a:0",
         "-t", str(dur),
         "-c:v", "libx264", "-crf", "18", "-preset", "slow", "-pix_fmt", "yuv420p",
         "-movflags", "+faststart",
