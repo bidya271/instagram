@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="en" data-resolution="portrait">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1080, height=1920" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;1,500;1,600&family=Plus+Jakarta+Sans:wght@500;600&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <style>
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      html, body {
+        margin: 0; width: 1080px; height: 1920px; overflow: hidden; background: #000; color: #fff;
+        -webkit-font-smoothing: antialiased;
+      }
+      #root {
+        position: relative; width: 1080px; height: 1920px; overflow: hidden; background: #000;
+      }
+      .video-bg {
+        position: absolute; inset: 0; width: 1080px; height: 1920px; object-fit: cover; z-index: 1;
+      }
+      /* Subtle filmic radial vignette for crisp optical contrast */
+      .cinematic-vignette {
+        position: absolute; inset: 0;
+        background: radial-gradient(circle at 50% 48%, transparent 25%, rgba(0,0,0,0.38) 100%),
+                    linear-gradient(to bottom, rgba(0,0,0,0.25) 0%, transparent 20%, transparent 80%, rgba(0,0,0,0.5) 100%);
+        pointer-events: none; z-index: 2;
+      }
+      
+      /* Optical center stage matching viral reference */
+      .text-stage {
+        position: absolute; top: 48%; left: 90px; right: 90px;
+        transform: translateY(-50%);
+        display: flex; flex-direction: column; align-items: center; justify-content: center;
+        text-align: center;
+        z-index: 10;
+      }
+      .quote-line {
+        position: absolute; width: 100%;
+        font-family: 'Playfair Display', Georgia, serif;
+        font-style: italic;
+        font-size: 56px;
+        font-weight: 500;
+        line-height: 1.38;
+        letter-spacing: -0.01em;
+        color: #FFFFFF;
+        text-shadow: 0 2px 14px rgba(0,0,0,0.95), 0 1px 4px rgba(0,0,0,0.9);
+        opacity: 0;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="root" data-composition-id="main" data-start="0" data-duration="{{duration}}" data-width="1080" data-height="1920">
+      <video id="bgVideo" src="assets/bg_video.mp4" class="clip video-bg" data-start="0" data-duration="{{duration}}" autoplay muted loop playsinline></video>
+      <div class="cinematic-vignette"></div>
+
+      <div class="text-stage">
+        <div class="quote-line" id="line1">{{line1}}</div>
+        <div class="quote-line" id="line2">{{line2}}</div>
+      </div>
+
+      <audio id="masterAudio" src="assets/audio.mp3" class="clip" data-start="0" data-duration="{{duration}}"></audio>
+    </div>
+
+    <script>
+      const tl = gsap.timeline({ paused: true });
+
+      // Line 1: 0.15s -> 3.2s
+      tl.fromTo("#line1", { opacity: 0, y: 12 }, { opacity: 1, y: 0, duration: 0.5, ease: "power2.out" }, 0.15);
+      tl.to("#line1", { opacity: 0, y: -8, duration: 0.35, ease: "power2.in" }, {{t1_end}});
+
+      // Line 2: 3.5s -> 6.6s (transitions precisely with the video cut)
+      tl.fromTo("#line2", { opacity: 0, y: 12 }, { opacity: 1, y: 0, duration: 0.5, ease: "power2.out" }, {{t2_start}});
+      tl.to("#line2", { opacity: 0, duration: 0.3, ease: "power2.in" }, {{t2_end}});
+
+      window.__timelines = window.__timelines || {};
+      window.__timelines["main"] = tl;
+      tl.seek(0);
+    </script>
+  </body>
+</html>

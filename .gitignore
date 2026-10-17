@@ -65,3 +65,11 @@ harvey.local.yaml
 assets/footage/
 *.log
 *.mp3
+*.mp4
+*.jpg
+*.wav
+temp_omni_engine/
+temp_viral_7s/
+test_renders/
+ref_analysis/
+ref_frames/
