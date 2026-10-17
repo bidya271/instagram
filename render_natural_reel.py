@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
 """
 render_natural_reel.py
-Dynamic, realistic, aesthetic Instagram Reel renderer.
+Dynamic, realistic, aesthetic Instagram Reel renderer with audible, mastered trending BGM.
 - 1080x1920 Full-Bleed 4K/HD Authentic Video (zero artificial UI cards/borders)
 - Frameless editorial typography with soft film drop-shadow
-- Mastered trending ambient audio (Snowfall, Solitude, New Home, etc.)
+- Mastered trending ambient audio (Snowfall, Solitude) with explicit hook offsets, stereo normalization, and loudnorm (-14 LUFS)
 - Warm, relatable human voiceover (AndrewMultilingualNeural)
 - Ultra-high retention dynamic pacing
 """
@@ -23,6 +23,13 @@ AUDIO_DIR = WORKSPACE / "assets" / "audio"
 REELS_DIR = WORKSPACE / "reels"
 TEMP_DIR = WORKSPACE / "temp_natural_reels"
 
+def get_dur(file_path):
+    out = subprocess.check_output([
+        "ffprobe", "-v", "error", "-show_entries", "format=duration",
+        "-of", "default=noprint_wrappers=1:nokey=1", str(file_path)
+    ])
+    return float(out.strip())
+
 REELS_DATA = {
     "004": {
         "num": "004",
@@ -31,16 +38,14 @@ REELS_DATA = {
         "book": "The Gravity of Power",
         "footage": FOOTAGE_DIR / "walking_rain_night_street_39611009.mp4",
         "bgm": AUDIO_DIR / "snowfall.mp3",
+        "bgm_ss": "00:00:20",       # Jump right to the famous Snowfall synth drop
+        "bgm_volume": 0.90,         # Prominent, clearly audible background music
         "voice": "en-US-AndrewMultilingualNeural",
-        "voice_rate": "-4%",
-        "bgm_volume": 0.18,
+        "voice_rate": "+0%",
         "script": "The most dangerous person in the room is never the one shouting. Insecurity is loud. It needs an audience. But true power is quiet. It watches, listens, and decides without ever needing to perform.",
         "line1": "The most dangerous person in the room is never the one shouting.",
         "line2": "Insecurity is loud. True power is quiet.\nIt never needs an audience to know its worth.",
-        "duration": 11.0,
-        "line1_times": (0.3, 4.8),
-        "line2_times": (5.1, 10.8),
-        "video_ss": "00:00:03",
+        "video_ss": "00:00:02",
         "caption": """The loudest person in the room is usually the most terrified.
 
 When you constantly feel the urge to explain yourself, interrupt, or prove how smart you are, you aren’t demonstrating authority. You’re advertising anxiety.
@@ -59,16 +64,14 @@ Save this for the next time you're tempted to speak when you should be observing
         "title": "Camouflage Your Victories",
         "book": "Status: The Currency of Envy",
         "footage": FOOTAGE_DIR / "dark_lake_mist_solitude_35199993.mp4",
-        "bgm": AUDIO_DIR / "new_home.mp3",
+        "bgm": AUDIO_DIR / "solitude.mp3",
+        "bgm_ss": "00:00:00",       # Immediate, majestic orchestral piano and synth
+        "bgm_volume": 0.85,         # Prominent, clearly audible background music
         "voice": "en-US-AndrewMultilingualNeural",
-        "voice_rate": "-4%",
-        "bgm_volume": 0.20,
+        "voice_rate": "+0%",
         "script": "Notice how people love giving you advice when you're struggling, but grow strangely quiet the moment you succeed? Learn to celebrate your wins in silence. Protect your peace from rooms that only loved you when you were small.",
         "line1": "Notice how people love giving advice when you struggle, but grow silent the moment you succeed?",
         "line2": "Learn to celebrate your wins in silence.\nProtect your peace from rooms that only loved you when you were small.",
-        "duration": 12.0,
-        "line1_times": (0.3, 5.2),
-        "line2_times": (5.5, 11.8),
         "video_ss": "00:00:01",
         "caption": """People love comforting you when you're down. It confirms their hierarchy.
 
@@ -94,7 +97,7 @@ def render_natural_reel(item):
 
     print(f"\n=======================================================")
     print(f"[*] RENDERING DYNAMIC NATURAL REEL: {reel_id} - {item['title']}")
-    print(f"[*] Book: {item['book']} | Duration: {item['duration']}s")
+    print(f"[*] Book: {item['book']} | Music: {item['bgm'].name} (offset {item['bgm_ss']}, vol {item['bgm_volume']})")
     print(f"=======================================================")
 
     work_dir = TEMP_DIR / reel_id
@@ -103,9 +106,45 @@ def render_natural_reel(item):
         shutil.rmtree(work_dir)
     assets_dir.mkdir(parents=True, exist_ok=True)
 
-    # 1. Prepare Background Video (Full-bleed 1080x1920)
-    print("    [1/6] Preparing full-bleed 1080x1920 video clip...")
-    dur = item['duration']
+    # 1. Generate Voiceover via Edge-TTS
+    print("    [1/6] Generating warm relatable voiceover...")
+    voice_file = assets_dir / "voice.mp3"
+    subprocess.run([
+        ".venv/bin/edge-tts",
+        f"--voice={item['voice']}",
+        f"--rate={item['voice_rate']}",
+        f"--text={item['script']}",
+        f"--write-media={voice_file}"
+    ], check=True)
+
+    voice_dur = get_dur(voice_file)
+    # Add 1.8s musical tail after the speech finishes for emotional resonance
+    dur = round(voice_dur + 1.8, 1)
+    print(f"    [+] Voice duration: {voice_dur:.2f}s | Total Reel Duration: {dur:.1f}s")
+
+    # 2. Master Audio: Resample + Stereo Format + Prominent BGM + Loudnorm (-14 LUFS)
+    print("    [2/6] Mixing voice with prominent, clearly audible music (loudnorm -14 LUFS)...")
+    audio_file = assets_dir / "audio.mp3"
+    subprocess.run([
+        "ffmpeg", "-y",
+        "-i", str(voice_file),
+        "-ss", item["bgm_ss"],
+        "-t", str(dur),
+        "-i", str(item["bgm"]),
+        "-filter_complex",
+        f"[0:a]aresample=48000,aformat=channel_layouts=stereo,volume=1.05[vce];"
+        f"[1:a]aresample=48000,aformat=channel_layouts=stereo,volume={item['bgm_volume']},"
+        f"afade=t=in:st=0:d=0.2,afade=t=out:st={dur-1.8}:d=1.8[bgm];"
+        f"[vce][bgm]amix=inputs=2:duration=longest:normalize=0[mixed];"
+        f"[mixed]loudnorm=I=-14:TP=-1.0:LRA=7[aout]",
+        "-map", "[aout]",
+        "-t", str(dur),
+        "-c:a", "mp3", "-b:a", "192k",
+        str(audio_file)
+    ], check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+
+    # 3. Prepare Background Video (Full-bleed 1080x1920)
+    print("    [3/6] Preparing full-bleed 1080x1920 video clip...")
     subprocess.run([
         "ffmpeg", "-y",
         "-ss", item['video_ss'],
@@ -114,33 +153,6 @@ def render_natural_reel(item):
         "-vf", "scale=1080:1920:force_original_aspect_ratio=increase,crop=1080:1920",
         "-c:v", "libx264", "-preset", "ultrafast", "-pix_fmt", "yuv420p", "-an",
         str(assets_dir / "bg_video.mp4")
-    ], check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-
-    # 2. Generate Voiceover via Edge-TTS
-    print("    [2/6] Generating warm relatable voiceover...")
-    subprocess.run([
-        ".venv/bin/edge-tts",
-        f"--voice={item['voice']}",
-        f"--rate={item['voice_rate']}",
-        f"--text={item['script']}",
-        f"--write-media={assets_dir}/voice.mp3"
-    ], check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-
-    # 3. Master Audio (Voice + Ambient BGM ducking)
-    print("    [3/6] Mixing voice with ambient cinematic music...")
-    subprocess.run([
-        "ffmpeg", "-y",
-        "-i", str(assets_dir / "voice.mp3"),
-        "-stream_loop", "-1",
-        "-t", str(dur),
-        "-i", str(item['bgm']),
-        "-filter_complex",
-        f"[1:a]volume={item['bgm_volume']},afade=t=out:st={dur-2.5}:d=2.5[bgm];"
-        f"[0:a]volume=1.0[vce];"
-        f"[vce][bgm]amix=inputs=2:duration=first:dropout_transition=2[aout]",
-        "-map", "[aout]",
-        "-c:a", "mp3", "-b:a", "192k",
-        str(assets_dir / "audio.mp3")
     ], check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
 
     # 4. Generate Hyperframes Composition with Pure Frameless Typography
@@ -156,8 +168,11 @@ def render_natural_reel(item):
             "media": {"autoProxy": True}
         }, f, indent=2)
 
-    l1_start, l1_end = item['line1_times']
-    l2_start, l2_end = item['line2_times']
+    # Compute text transitions dynamically based on speech midpoint
+    midpoint = round(voice_dur * 0.45, 1)
+    l1_start = 0.2
+    l1_end = midpoint + 0.3
+    l2_start = midpoint + 0.6
     l1_text = item['line1'].replace("\n", "<br>")
     l2_text = item['line2'].replace("\n", "<br>")
 
@@ -185,8 +200,8 @@ def render_natural_reel(item):
       /* Ultra-subtle filmic contrast gradient for seamless text legibility */
       .cinematic-vignette {{
         position: absolute; inset: 0;
-        background: radial-gradient(circle at 50% 40%, transparent 25%, rgba(0,0,0,0.4) 100%),
-                    linear-gradient(to bottom, rgba(0,0,0,0.35) 0%, transparent 22%, transparent 75%, rgba(0,0,0,0.6) 100%);
+        background: radial-gradient(circle at 50% 38%, transparent 28%, rgba(0,0,0,0.42) 100%),
+                    linear-gradient(to bottom, rgba(0,0,0,0.32) 0%, transparent 22%, transparent 75%, rgba(0,0,0,0.6) 100%);
         pointer-events: none; z-index: 2;
       }}
       
@@ -277,7 +292,9 @@ def render_natural_reel(item):
         "book": item['book'],
         "duration": dur,
         "caption": item['caption'],
-        "script": item['script']
+        "script": item['script'],
+        "bgm": item['bgm'].name,
+        "bgm_ss": item['bgm_ss']
     }
     with open(target_dir / "meta.json", "w") as f:
         json.dump(meta, f, indent=2)
