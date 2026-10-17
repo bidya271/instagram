@@ -2,14 +2,14 @@
   {
     "id": "reel-004",
     "slug": "illusion-of-loud-power",
-    "title": "The Illusion of Loud Power / Strategic Silence",
+    "title": "Rule 1: The Power of Silence in Boardrooms",
     "book": "The Gravity of Power",
     "scheduledDate": "2026-10-17",
     "mediaUrl": "https://github.com/bidya271/instagram/releases/download/media-vault/reel_004.mp4",
     "bufferPosts": {
-      "instagram": "6ad20dd725d13dd62ee3d55e",
-      "youtube": "6ad20df1047945ca309b0d3e",
-      "tiktok": "6ad20df3047945ca309b0d80"
+      "instagram": "6ad32eb5ae173d6e00a9e2be",
+      "youtube": "6ad32eb60b0d72757aca4fb2",
+      "tiktok": "6ad32ea90a208cb3230fe466"
     },
     "audioTrack": "solitude.mp3",
     "footageClip": "minimal_architecture_28883887.mp4",
@@ -19,20 +19,23 @@
       "beat3_header": "When you need to announce control, you have already lost it.",
       "beat3_sub": "True leverage moves in total silence."
     },
-    "caption": "The loudest person in the room is never the most powerful. Real authority does not perform; it decides. When you need to announce your control, you have already lost it. True leverage moves in total silence.\n\nDiscover the unwritten dynamics of corporate thrones in 'The Gravity of Power'.\n\n#unwrittenrules #thegravityofpower #darkpsychology #powerdynamics #leadership #stoicism #quietluxury #reels #shorts",
-    "status": "scheduled_in_buffer"
+    "caption": "Rule 1 of corporate power: don't speak first.\n\nWhen 10 people sit in a boardroom, watch who breaks the silence. The person scrambling to talk is usually the most terrified. Real authority doesn't perform. It decides.\n\nSave this for your next 1-on-1 review.\n\n#unwrittenrules #thegravityofpower #powerdynamics",
+    "status": "scheduled_in_buffer",
+    "rule_badge": "RULE #1",
+    "duration": 7.0,
+    "spoken_hook": "Rule 1: never speak first in your meetings."
   },
   {
     "id": "reel-005",
     "slug": "exhaustion-of-approval",
-    "title": "The Exhaustion of Approval / The Prison of Opinions",
+    "title": "Rule 2: Why Insecure Friends Hate Your Wins",
     "book": "Status: The Currency of Envy",
     "scheduledDate": "2026-10-18",
     "mediaUrl": "https://github.com/bidya271/instagram/releases/download/media-vault/reel_005.mp4",
     "bufferPosts": {
-      "instagram": "6ad20dfbb948bf9e9d9196a4",
-      "youtube": "6ad20dfdf24c5797a2392719",
-      "tiktok": "6ad20dff1ffe4709802a0f5b"
+      "instagram": "6ad32ec1769b4579346ae4d3",
+      "youtube": "6ad32ec20a208cb3230fe9a1",
+      "tiktok": "6ad32ec3ae173d6e00a9e7d0"
     },
     "audioTrack": "new_home.mp3",
     "footageClip": "foggy_mountain_36146543.mp4",
@@ -42,8 +45,11 @@
       "beat3_header": "Status is an auction with no closing bell.",
       "beat3_sub": "The only way to win is to refuse to bid."
     },
-    "caption": "You are not exhausted from working hard. You are exhausted from performing for people you don't even respect. Status is an auction with no closing bell. The only way to win is to refuse to bid.\n\nDeconstruct the games of prestige and social envy in 'Status: The Currency of Envy'.\n\n#unwrittenrules #status #darkpsychology #stoicmindset #boundaries #mentalclarity #freedom #reels #shorts",
-    "status": "scheduled_in_buffer"
+    "caption": "Rule 2 of status: camouflage your victories.\n\nPeople love comforting you when you struggle. It confirms their hierarchy. But the moment you pull ahead, their comfort turns into subtle critique. Protect your peace.\n\nSave this before you share your next big win.\n\n#unwrittenrules #status #darkpsychology",
+    "status": "scheduled_in_buffer",
+    "rule_badge": "RULE #2",
+    "duration": 7.0,
+    "spoken_hook": "Rule 2: never share your wins with an insecure friend."
   },
   {
     "id": "reel-006",
