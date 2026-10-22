@@ -23,7 +23,8 @@
     "status": "scheduled_in_buffer",
     "rule_badge": "RULE #1",
     "duration": 7.0,
-    "spoken_hook": "Rule 1: never speak first in your meetings."
+    "spoken_hook": "Rule 1: never speak first in your meetings.",
+    "scheduledSlots": {}
   },
   {
     "id": "reel-005",
@@ -49,7 +50,8 @@
     "status": "scheduled_in_buffer",
     "rule_badge": "RULE #2",
     "duration": 7.0,
-    "spoken_hook": "Rule 2: never share your wins with an insecure friend."
+    "spoken_hook": "Rule 2: never share your wins with an insecure friend.",
+    "scheduledSlots": {}
   },
   {
     "id": "reel-006",
@@ -72,7 +74,8 @@
       "beat3_sub": "A rule exists to shield the hierarchy, not you."
     },
     "caption": "Institutions do not have a conscience. They have compliance departments designed to protect their balance sheets. Never confuse corporate policy with moral truth. A rule exists to shield the hierarchy, not you.\n\nExplore ethical illusions and corporate absolution in 'The Morality Machine'.\n\n#unwrittenrules #themoralitymachine #corporateculture #powerdynamics #darkpsychology #stoicism #boundaries #reels #shorts",
-    "status": "scheduled_in_buffer"
+    "status": "scheduled_in_buffer",
+    "scheduledSlots": {}
   },
   {
     "id": "reel-007",
@@ -95,7 +98,8 @@
       "beat3_sub": "Stay grounded. Stay strategically detached."
     },
     "caption": "Beware of unearned praise in public meetings. Setting you on a pedestal is the easiest way to make your fall look like your own fault. Flattery creates an obligation you never signed. Stay grounded. Stay detached.\n\nUncover the psychological architecture of workplace deception in 'The Ideology of Hypocrisy'.\n\n#unwrittenrules #theideologyofhypocrisy #officepolitics #darkpsychology #manipulation #stoic #boundaries #reels #shorts",
-    "status": "scheduled_in_buffer"
+    "status": "scheduled_in_buffer",
+    "scheduledSlots": {}
   },
   {
     "id": "reel-008",
@@ -118,7 +122,8 @@
       "beat3_sub": "Define your number, or the machine will consume you."
     },
     "caption": "Money was invented as a simple tool for trade. Human psychology mutated it into an infinite scoreboard. When money becomes your identity, no amount will ever feel safe. Define your number, or the machine will consume you.\n\nFrom 'The Architecture of Greed'.\n\n#unwrittenrules #thearchitectureofgreed #wealthmindset #stoicism #freedom #financialfreedom #psychology #reels #shorts",
-    "status": "scheduled_in_buffer"
+    "status": "scheduled_in_buffer",
+    "scheduledSlots": {}
   },
   {
     "id": "reel-009",
@@ -141,7 +146,8 @@
       "beat3_sub": "You are trapped in an ideological cult."
     },
     "caption": "A tribe demands loyalty long before it offers protection. The price of belonging is always your intellectual independence. If your circle punishes honest questions, you are not in a community. You are trapped in an ideological cult.\n\nUnderstand group psychology in 'The Tribal Mind'.\n\n#unwrittenrules #thetriba\u0142mind #criticalthinking #darkpsychology #stoicism #autonomy #freedom #reels #shorts",
-    "status": "scheduled_in_buffer"
+    "status": "scheduled_in_buffer",
+    "scheduledSlots": {}
   },
   {
     "id": "reel-010",
@@ -164,7 +170,8 @@
       "beat3_sub": "Keep your paper trail clean. Loyalty will never defend you."
     },
     "caption": "When an initiative succeeds, leadership takes the equity. When it fails, middle management takes the blame. Hierarchy is an asymmetry engine. Keep your paper trail clean. Loyalty will never defend you.\n\nFrom 'The Gravity of Power'.\n\n#unwrittenrules #thegravityofpower #careeradvice #corporatepolitics #workplace #powerdynamics #stoic #reels #shorts",
-    "status": "scheduled_in_buffer"
+    "status": "scheduled_in_buffer",
+    "scheduledSlots": {}
   },
   {
     "id": "reel-011",
@@ -187,7 +194,8 @@
       "beat3_sub": "Modesty is not humility. It is social camouflage."
     },
     "caption": "People support you when you struggle. They begin to critique you the moment you pull ahead. Never flaunt your victories to an anxious room. Modesty is not humility. It is social camouflage.\n\nMaster the laws of envy in 'Status: The Currency of Envy'.\n\n#unwrittenrules #status #darkpsychology #envy #humanbehavior #stoicmindset #psychologyfacts #reels #shorts",
-    "status": "scheduled_in_buffer"
+    "status": "scheduled_in_buffer",
+    "scheduledSlots": {}
   },
   {
     "id": "reel-012",
@@ -210,7 +218,8 @@
       "beat3_sub": "Anger is the most lucrative product in the attention economy."
     },
     "caption": "Public outrage is rarely about justice. It is a social luxury good, manufactured to signal virtue without cost. Notice who profits when a digital mob forms. Anger is the most lucrative product in the attention economy.\n\nFrom 'The Morality Machine'.\n\n#unwrittenrules #themoralitymachine #media #attentioneconomy #darkpsychology #stoicism #mindfulness #reels #shorts",
-    "status": "scheduled_in_buffer"
+    "status": "scheduled_in_buffer",
+    "scheduledSlots": {}
   },
   {
     "id": "reel-013",
@@ -233,7 +242,8 @@
       "beat3_sub": "Protect your peace without apology."
     },
     "caption": "Repeated disrespect is never a communication problem. It is a boundary problem that you refused to enforce. Forgiveness without changed behavior is an invitation for escalation. Protect your peace without apology.\n\nFrom 'The Ideology of Hypocrisy'.\n\n#unwrittenrules #theideologyofhypocrisy #boundaries #respect #darkpsychology #stoicmindset #protectyourpeace #reels #shorts",
-    "status": "vaulted_awaiting_buffer_slot"
+    "status": "vaulted_awaiting_buffer_slot",
+    "scheduledSlots": {}
   },
   {
     "id": "reel-014",
@@ -256,7 +266,8 @@
       "beat3_sub": "It is the number of things you have the power to walk away from."
     },
     "caption": "Buying things to impress people you dislike is modern insanity. Every luxury you cannot afford is a mortgage on your future freedom. True wealth is not the size of your display. It is the number of things you have the power to walk away from.\n\nFrom 'The Architecture of Greed'.\n\n#unwrittenrules #thearchitectureofgreed #wealth #freedom #sovereignty #stoicism #minimalism #reels #shorts",
-    "status": "vaulted_awaiting_buffer_slot"
+    "status": "vaulted_awaiting_buffer_slot",
+    "scheduledSlots": {}
   },
   {
     "id": "reel-015",
@@ -279,7 +290,8 @@
       "beat3_sub": "Scarcity turns basic utility into luxury."
     },
     "caption": "If you are available all the time, your perceived value approaches zero. Presence creates familiarity, but strategic absence commands respect. Learn to withdraw before your welcome expires. Scarcity turns basic utility into luxury.\n\nFrom 'The Gravity of Power'.\n\n#unwrittenrules #thegravityofpower #powerdynamics #value #scarcity #negotiation #stoic #reels #shorts",
-    "status": "vaulted_awaiting_buffer_slot"
+    "status": "vaulted_awaiting_buffer_slot",
+    "scheduledSlots": {}
   },
   {
     "id": "reel-016",
@@ -302,7 +314,8 @@
       "beat3_sub": "Build your leverage before the hierarchy dissolves."
     },
     "caption": "In the industrial age, power meant managing thousands of people. In the intelligence age, power means orchestrating autonomous systems. A single focused mind with automated architecture now out-produces an entire legacy department. Build your leverage.\n\nFrom 'AI Production Handbook'.\n\n#unwrittenrules #aiproductionhandbook #aiagents #systems #solopreneur #leverage #futureofwork #reels #shorts",
-    "status": "vaulted_awaiting_buffer_slot"
+    "status": "vaulted_awaiting_buffer_slot",
+    "scheduledSlots": {}
   },
   {
     "id": "reel-017",
@@ -325,7 +338,8 @@
       "beat3_sub": "The only real luxury is living entirely on your own terms."
     },
     "caption": "You cannot defeat someone who refuses to compete with you. The status game is only deadly when you believe the rules are real. Step off the scoreboard. The only real luxury is living entirely on your own terms.\n\nFrom 'Status: The Currency of Envy'.\n\n#unwrittenrules #status #innerpeace #stoicism #freedom #autonomy #psychology #reels #shorts",
-    "status": "vaulted_awaiting_buffer_slot"
+    "status": "vaulted_awaiting_buffer_slot",
+    "scheduledSlots": {}
   },
   {
     "id": "reel-018",
@@ -350,7 +364,12 @@
     },
     "caption": "Never trust someone who advertises their good deeds to the room.\n\nHuman morality does not function like a savings account that steadily accumulates credit. It operates like a prepaid card.\n\nThe moment someone performs a visible act of public virtue, their internal monitoring softens. That single display quietly purchases an internal permission slip for private cruelty, selfish extraction, or sudden arrogance.\n\nThe most dangerous players in any hierarchy are never the cartoon villains who know they are ruthless. They are the ones convinced that their charitable credentials give them moral immunity.\n\nSave this before you fall for the next moral performance.\n\nExplore ethical illusions and corporate absolution in 'The Morality Machine'.\n\n#unwrittenrules #themoralitymachine #darkpsychology #powerdynamics #morallicensing #humanbehavior #stoicmindset #officepolitics #reels #shorts",
     "status": "scheduled_in_buffer",
-    "duration": 25.38
+    "duration": 25.38,
+    "scheduledSlots": {
+      "instagram": "2026-10-28T16:30:00.000Z",
+      "youtube": "2026-10-28T15:30:00.000Z",
+      "tiktok": "2026-10-28T18:30:00.000Z"
+    }
   },
   {
     "id": "reel-019",
@@ -375,7 +394,12 @@
     },
     "caption": "You judge everyone else by their actions, but you judge yourself by your intentions.\n\nWhen another person makes a mistake, cuts into your lane, or misses a deadline, your brain makes an instantaneous calculation: you decide they are incompetent, selfish, or reckless. You treat their behavior as an unvarnished reflection of their character.\n\nWhen you make the exact same mistake, your cognitive machinery performs an instantaneous about-face. You point to the brutal weight of circumstance. You were exhausted. You had an emergency. You were dealing with impossible constraints.\n\nYou grant yourself an infinite reservoir of context, nuance, and grace, while denying that very same grace to everyone around you.\n\nSocial psychologists call this the Actor-Observer Asymmetry. It isn't a conscious moral failure; it is an automated biological shield evolved to protect your self-esteem while judging competitors.\n\nSave this before you judge someone today.\n\nExplore the evolution of tactical deception and double standards in 'The Ideology of Hypocrisy'.\n\n#unwrittenrules #theideologyofhypocrisy #darkpsychology #psychologyfacts #humanbehavior #cognitivebias #stoicmindset #selfawareness #reels #shorts",
     "status": "scheduled_in_buffer",
-    "duration": 29.13
+    "duration": 29.13,
+    "scheduledSlots": {
+      "instagram": "2026-10-29T16:30:00.000Z",
+      "youtube": "2026-10-29T15:30:00.000Z",
+      "tiktok": "2026-10-29T18:30:00.000Z"
+    }
   },
   {
     "id": "reel-020",
@@ -396,7 +420,11 @@
     ],
     "duration": 7.0,
     "status": "scheduled_in_buffer",
-    "critic_score": 9.55
+    "critic_score": 9.55,
+    "scheduledSlots": {
+      "youtube": "2026-10-22T17:30:00.000Z",
+      "tiktok": "2026-10-22T18:30:00.000Z"
+    }
   },
   {
     "id": "reel-021",
@@ -413,7 +441,12 @@
       "youtube": "6ad9d6ddd7259dd11b13f1b5",
       "tiktok": "6ad9d6e281158a0b1794937a"
     },
-    "status": "scheduled_in_buffer"
+    "status": "scheduled_in_buffer",
+    "scheduledSlots": {
+      "instagram": "2026-10-23T16:30:00.000Z",
+      "youtube": "2026-10-23T15:30:00.000Z",
+      "tiktok": "2026-10-23T18:45:00.000Z"
+    }
   },
   {
     "id": "reel-022",
@@ -430,7 +463,12 @@
       "youtube": "6ad9d6f3709d8fcbfb256b8e",
       "tiktok": "6ad9d6f81ddfbd0b4bd8eb17"
     },
-    "status": "scheduled_in_buffer"
+    "status": "scheduled_in_buffer",
+    "scheduledSlots": {
+      "instagram": "2026-10-26T16:45:00.000Z",
+      "youtube": "2026-10-25T10:00:00.000Z",
+      "tiktok": "2026-10-25T08:30:00.000Z"
+    }
   },
   {
     "id": "reel-023",
@@ -447,6 +485,11 @@
       "youtube": "6ad9d7d54278e7eb700c32f5",
       "tiktok": "6ad9d7db709d8fcbfb25ad1b"
     },
-    "status": "scheduled_in_buffer"
+    "status": "scheduled_in_buffer",
+    "scheduledSlots": {
+      "instagram": "2026-10-27T16:30:00.000Z",
+      "youtube": "2026-10-27T15:30:00.000Z",
+      "tiktok": "2026-10-26T09:15:00.000Z"
+    }
   }
 ]
