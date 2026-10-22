@@ -397,5 +397,56 @@
     "duration": 7.0,
     "status": "scheduled_in_buffer",
     "critic_score": 9.55
+  },
+  {
+    "id": "reel-021",
+    "num": "021",
+    "slug": "bigger-shovel",
+    "title": "The Performance Punishment",
+    "book": "The Gravity of Power",
+    "theme": "Strategic Incompetence & Institutional Extraction",
+    "duration": 7.0,
+    "scheduledDate": "2026-10-25",
+    "mediaUrl": "https://github.com/bidya271/instagram/releases/download/media-vault/reel_021.mp4",
+    "bufferPosts": {
+      "instagram": "6ad9d6d781158a0b17948e77",
+      "youtube": "6ad9d6ddd7259dd11b13f1b5",
+      "tiktok": "6ad9d6e281158a0b1794937a"
+    },
+    "status": "scheduled_in_buffer"
+  },
+  {
+    "id": "reel-022",
+    "num": "022",
+    "slug": "false-cheerleader",
+    "title": "The Hierarchy of Empathy",
+    "book": "Status: The Currency of Envy",
+    "theme": "Peer Competition & Covert Jealousy",
+    "duration": 7.0,
+    "scheduledDate": "2026-10-26",
+    "mediaUrl": "https://github.com/bidya271/instagram/releases/download/media-vault/reel_022.mp4",
+    "bufferPosts": {
+      "instagram": "6ad9d6ed4278e7eb700bf52d",
+      "youtube": "6ad9d6f3709d8fcbfb256b8e",
+      "tiktok": "6ad9d6f81ddfbd0b4bd8eb17"
+    },
+    "status": "scheduled_in_buffer"
+  },
+  {
+    "id": "reel-023",
+    "num": "023",
+    "slug": "selling-time",
+    "title": "The Golden Handcuffs",
+    "book": "The Architecture of Greed",
+    "theme": "Wealth as Scoreboard & Cognitive Traps",
+    "duration": 7.0,
+    "scheduledDate": "2026-10-27",
+    "mediaUrl": "https://github.com/bidya271/instagram/releases/download/media-vault/reel_023.mp4",
+    "bufferPosts": {
+      "instagram": "6ad9d6fe81158a0b179498b3",
+      "youtube": "6ad9d7d54278e7eb700c32f5",
+      "tiktok": "6ad9d7db709d8fcbfb25ad1b"
+    },
+    "status": "scheduled_in_buffer"
   }
 ]

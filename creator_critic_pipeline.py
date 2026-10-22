@@ -197,46 +197,74 @@ class ProductionEngine:
         return Path(clip1_path), Path(clip2_path)
 
     def synthesize_audio(self, proposal):
-        """Generates Christopher Neural low-pitch voiceover and mixes with authentic viral BGM."""
-        raw_voice = self.assets_dir / "raw_voice.mp3"
-        print("[*] Synthesizing Christopher Neural (-6Hz low pitch, heavy, authoritative)...")
+        """
+        Synthesizes Christopher Neural voiceover as TWO distinct phrases separated by a dramatic
+        cinematic pause, locked to the 3.4s visual scene cut.
+        """
+        p1_text = proposal["lines"]["line1"].replace("<br>", " ").strip()
+        p2_text = proposal["lines"]["line2"].replace("<br>", " ").strip()
+
+        raw_p1 = self.assets_dir / "raw_part1.mp3"
+        raw_p2 = self.assets_dir / "raw_part2.mp3"
+
+        print(f"[*] Synthesizing Phrase 1: '{p1_text}'...")
         subprocess.run([
             str(WORKSPACE / ".venv" / "bin" / "edge-tts"),
             "--voice=en-US-ChristopherNeural",
             "--pitch=-6Hz",
-            "--rate=-2%",
-            f"--text={proposal['script']}",
-            f"--write-media={raw_voice}"
+            "--rate=+2%",
+            f"--text={p1_text}",
+            f"--write-media={raw_p1}"
         ], check=True)
 
-        v_dur = float(subprocess.check_output([
-            "ffprobe", "-v", "error", "-show_entries", "format=duration",
-            "-of", "default=noprint_wrappers=1:nokey=1", str(raw_voice)
-        ]).strip())
-        print(f"[+] Voice duration: {v_dur:.2f}s (7s loop cushion: {7.00 - v_dur:.2f}s)")
+        print(f"[*] Synthesizing Phrase 2: '{p2_text}'...")
+        subprocess.run([
+            str(WORKSPACE / ".venv" / "bin" / "edge-tts"),
+            "--voice=en-US-ChristopherNeural",
+            "--pitch=-6Hz",
+            "--rate=+2%",
+            f"--text={p2_text}",
+            f"--write-media={raw_p2}"
+        ], check=True)
+
+        def get_d(f):
+            return float(subprocess.check_output([
+                "ffprobe", "-v", "error", "-show_entries", "format=duration",
+                "-of", "default=noprint_wrappers=1:nokey=1", str(f)
+            ]).strip())
+
+        d1 = get_d(raw_p1)
+        d2 = get_d(raw_p2)
+        pause_duration = 3.50 - (0.20 + d1)
+        print(f"[+] Phrase 1: {d1:.2f}s (ends at {0.20 + d1:.2f}s) | Dramatic Pause: {pause_duration:.2f}s | Phrase 2: {d2:.2f}s (starts at 3.50s)")
 
         # Master Audio Track: Voice at -14 LUFS + Viral BGM Ducked to -22dB
         audio_master = self.assets_dir / "audio.mp3"
         bgm_file = AUDIO_DIR / proposal["bgm_track"]
-        print(f"[*] Mastering audio bed: Voice at broadcast -14 LUFS over viral BGM '{bgm_file.name}'...")
+        print(f"[*] Mastering dual-phrase audio bed over viral BGM '{bgm_file.name}'...")
 
         filter_complex = (
-            # 1. Voice mastering: 110Hz sub warmth, 400Hz scoop, 3kHz presence, loudnorm
-            "[0:a]aresample=48000,aformat=channel_layouts=stereo,"
+            # 1. Voice timing: Part 1 at 200ms, Part 2 delayed to 3500ms (locked to Scene 2 cut)
+            "[0:a]adelay=200|200,volume=1.0[v1];"
+            "[1:a]adelay=3500|3500,volume=1.0[v2];"
+            "[v1][v2]amix=inputs=2:duration=longest:normalize=0[vce_raw];"
+            # 2. Voice EQ + Loudnorm mastering
+            "[vce_raw]aresample=48000,aformat=channel_layouts=stereo,"
             "equalizer=f=110:width_type=o:width=1.0:g=3.5,"
             "equalizer=f=400:width_type=o:width=1.0:g=-2.5,"
             "equalizer=f=3000:width_type=o:width=1.2:g=2.8,"
             "loudnorm=I=-14.0:TP=-1.5:LRA=7[vce];"
-            # 2. Viral BGM track with offset and volume ducking
-            f"[1:a]aresample=48000,aformat=channel_layouts=stereo,volume={proposal['bgm_volume']},"
+            # 3. Viral BGM track with offset and volume ducking
+            f"[2:a]aresample=48000,aformat=channel_layouts=stereo,volume={proposal['bgm_volume']},"
             f"afade=t=in:st=0:d=0.2,afade=t=out:st=6.2:d=0.8[bgm];"
-            # 3. Final master mix
-            "[vce][bgm]amix=inputs=2:duration=first:normalize=0[aout]"
+            # 4. Final master mix
+            "[vce][bgm]amix=inputs=2:duration=longest:normalize=0[aout]"
         )
 
         subprocess.run([
             "ffmpeg", "-y",
-            "-i", str(raw_voice),
+            "-i", str(raw_p1),
+            "-i", str(raw_p2),
             "-ss", proposal["bgm_ss"], "-t", "7.00", "-i", str(bgm_file),
             "-filter_complex", filter_complex,
             "-map", "[aout]",
