@@ -3,6 +3,7 @@
 produce_reel_025.py - Autonomous Socials Reel Producer for @unwrittenrules.b3
 Produces Reel 025: 'The Illusion of Effort'
 Book: 'AI Production Handbook'
+Dynamic 2-Shot Viral Montage (Crossfade at 3.4s)
 """
 
 import os
@@ -11,7 +12,6 @@ import json
 import time
 import shutil
 import subprocess
-import urllib.request
 from pathlib import Path
 
 WORKSPACE = Path("/Users/bidya/Documents/side hustle/socials")
@@ -50,9 +50,13 @@ REEL_SPEC = {
     "spoken": "In an automated world, effort is no longer a virtue. It is an engineering failure.",
     "line1": "in an automated world, effort is no longer a virtue.",
     "line2": "it is an engineering failure.",
+    "shot1_scenario": "Tired exhausted office worker grinding at desk late at night",
+    "shot1_file": "tired_office_computer_night_12893568.mp4",
+    "shot2_scenario": "Gleaming dark server room racks with pulsing data lights",
+    "shot2_file": "server_room_lights_dark_7986749.mp4",
     "bgm_track": "solitude.mp3",
     "bgm_ss": "00:00:00",
-    "bgm_volume": 0.22,
+    "bgm_volume": 0.18,
     "caption": """The hardest pill to swallow in the modern workplace:
 
 We were trained to believe that sweat equals value. We were taught that exhaustion is proof of dedication.
@@ -78,81 +82,109 @@ def log(msg):
 
 
 def step_1_check_footage():
-    log("Step 1: Checking footage in assets/footage/...")
-    fresh_clips = [p for p in FOOTAGE_DIR.glob("*.mp4") if "used" not in str(p)]
-    log(f"Found {len(fresh_clips)} fresh clips in assets/footage/")
-    if len(fresh_clips) < 2:
-        log("Fewer than 2 fresh clips exist. Running pexels_scout.py...")
-        subprocess.run([str(WORKSPACE / ".venv" / "bin" / "python"), "pexels_scout.py"], check=True)
-        fresh_clips = [p for p in FOOTAGE_DIR.glob("*.mp4") if "used" not in str(p)]
+    log("Step 1: Locating 2-shot footage clips...")
+    clip1 = FOOTAGE_DIR / REEL_SPEC["shot1_file"]
+    clip2 = FOOTAGE_DIR / REEL_SPEC["shot2_file"]
     
-    # Selected clip: chess_dramatic_dark_7688797.mp4 (strategic calculation, dark upper negative space)
-    preferred_clip = FOOTAGE_DIR / "chess_dramatic_dark_7688797.mp4"
-    if not preferred_clip.exists():
-        preferred_clip = fresh_clips[0]
-    log(f"Selected fresh footage clip: {preferred_clip.name}")
-    return preferred_clip
+    if not clip1.exists():
+        fresh = [p for p in FOOTAGE_DIR.glob("*.mp4") if "used" not in str(p)]
+        clip1 = fresh[0]
+    if not clip2.exists():
+        fresh = [p for p in FOOTAGE_DIR.glob("*.mp4") if str(p) != str(clip1) and "used" not in str(p)]
+        clip2 = fresh[0]
+        
+    log(f"Shot 1 Clip: {clip1.name} (Tension/Human Grind)")
+    log(f"Shot 2 Clip: {clip2.name} (System/Automated Infrastructure)")
+    return clip1, clip2
 
 
 def step_2_audio():
-    log("Step 2: Synthesizing & mastering studio audio...")
+    log("Step 2: Synthesizing & mastering dual-phrase studio audio...")
     assets_dir = TEMP_DIR / "assets"
     assets_dir.mkdir(parents=True, exist_ok=True)
     
-    raw_voice = assets_dir / "raw_voice.mp3"
-    mastered_voice = assets_dir / "mastered_voice.mp3"
-    mixed_audio = assets_dir / "audio.mp3"
+    raw_p1 = assets_dir / "raw_part1.mp3"
+    raw_p2 = assets_dir / "raw_part2.mp3"
+    audio_master = assets_dir / "audio.mp3"
     
-    # 1. Edge TTS
-    log("Generating Christopher Neural speech...")
+    p1_text = REEL_SPEC["line1"]
+    p2_text = REEL_SPEC["line2"]
+    
+    # 1. Edge TTS for both phrases
+    log(f"Synthesizing Phrase 1: '{p1_text}'...")
     subprocess.run([
         str(WORKSPACE / ".venv" / "bin" / "edge-tts"),
         "--voice=en-US-ChristopherNeural",
-        "--pitch=-4Hz",
+        "--pitch=-5Hz",
         "--rate=+2%",
-        f"--text={REEL_SPEC['spoken']}",
-        f"--write-media={raw_voice}"
+        f"--text={p1_text}",
+        f"--write-media={raw_p1}"
     ], check=True)
-    
-    # 2. Studio Mastering Chain from REEL_PRODUCTION_STANDARD.md
-    log("Applying studio mastering chain: 130Hz boost, 400Hz scoop, 3500Hz clarity, compressor...")
+
+    log(f"Synthesizing Phrase 2: '{p2_text}'...")
     subprocess.run([
-        "ffmpeg", "-y", "-i", str(raw_voice),
-        "-af", "equalizer=f=130:t=q:w=1:g=3.5,equalizer=f=400:t=q:w=1.5:g=-2.5,equalizer=f=3500:t=q:w=1:g=2.5,acompressor=threshold=-18dB:ratio=3:attack=5:release=50",
-        "-b:a", "192k", str(mastered_voice)
-    ], check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-    
-    # 3. Audio Mixing with Preset 2A (Solitude Intro)
+        str(WORKSPACE / ".venv" / "bin" / "edge-tts"),
+        "--voice=en-US-ChristopherNeural",
+        "--pitch=-5Hz",
+        "--rate=+2%",
+        f"--text={p2_text}",
+        f"--write-media={raw_p2}"
+    ], check=True)
+
+    def get_d(f):
+        return float(subprocess.check_output([
+            "ffprobe", "-v", "error", "-show_entries", "format=duration",
+            "-of", "default=noprint_wrappers=1:nokey=1", str(f)
+        ]).strip())
+
+    d1 = get_d(raw_p1)
+    d2 = get_d(raw_p2)
+    log(f"Phrase 1 duration: {d1:.2f}s | Phrase 2 duration: {d2:.2f}s")
+
+    # 2. Dual-phrase studio mastering chain with dramatic pause at 3.45s (cut point)
     bgm_file = AUDIO_DIR / REEL_SPEC["bgm_track"]
-    log(f"Mixing with {REEL_SPEC['bgm_track']} (Preset 2A)...")
+    log(f"Mixing dual-phrase audio over BGM '{bgm_file.name}' with crossfade sync...")
+
     filter_complex = (
-        "[0:a]aresample=48000,aformat=channel_layouts=stereo,volume=1.18[vce];"
-        f"[1:a]aresample=48000,aformat=channel_layouts=stereo,volume={REEL_SPEC['bgm_volume']},"
-        "afade=t=in:st=0:d=0.2,afade=t=out:st=5.8:d=1.2[bgm];"
+        "[0:a]adelay=180|180,volume=1.0[v1];"
+        "[1:a]adelay=3500|3500,volume=1.0[v2];"
+        "[v1][v2]amix=inputs=2:duration=longest:normalize=0[vce_raw];"
+        "[vce_raw]aresample=48000,aformat=channel_layouts=stereo,"
+        "equalizer=f=120:width_type=o:width=1.0:g=3.5,"
+        "equalizer=f=400:width_type=o:width=1.0:g=-2.5,"
+        "equalizer=f=3200:width_type=o:width=1.2:g=2.8,"
+        "loudnorm=I=-14.0:TP=-1.5:LRA=7[vce];"
+        f"[2:a]aresample=48000,aformat=channel_layouts=stereo,volume={REEL_SPEC['bgm_volume']},"
+        "afade=t=in:st=0:d=0.2,afade=t=out:st=6.0:d=1.0[bgm];"
         "[vce][bgm]amix=inputs=2:duration=first:normalize=0[aout]"
     )
+
     subprocess.run([
         "ffmpeg", "-y",
-        "-i", str(mastered_voice),
+        "-i", str(raw_p1),
+        "-i", str(raw_p2),
         "-ss", REEL_SPEC["bgm_ss"], "-t", "7.00", "-i", str(bgm_file),
         "-filter_complex", filter_complex,
         "-map", "[aout]",
         "-t", "7.00",
         "-c:a", "mp3", "-b:a", "192k",
-        str(mixed_audio)
+        str(audio_master)
     ], check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
     
-    return raw_voice, mastered_voice, mixed_audio
+    return raw_p1, raw_p2, audio_master
 
 
-def step_3_prepare_background_video(source_clip):
-    log("Step 3: Preparing 7.00s 1080x1920 background video...")
+def step_3_prepare_montage(clip1, clip2):
+    log("Step 3: Assembling 2-scene multi-shot montage (crossfade at 3.4s)...")
     bg_video = TEMP_DIR / "assets" / "bg_video.mp4"
     subprocess.run([
         "ffmpeg", "-y",
-        "-ss", "00:00:00", "-t", "7.00", "-i", str(source_clip),
+        "-ss", "00:00:00.5", "-t", "3.6", "-i", str(clip1),
+        "-ss", "00:00:01", "-t", "3.7", "-i", str(clip2),
         "-filter_complex",
-        "[0:v]scale=1080:1920:force_original_aspect_ratio=increase,crop=1080:1920,fps=60,settb=AVTB[outv]",
+        "[0:v]scale=1080:1920:force_original_aspect_ratio=increase,crop=1080:1920,fps=30,settb=AVTB[v0];"
+        "[1:v]scale=1080:1920:force_original_aspect_ratio=increase,crop=1080:1920,fps=30,settb=AVTB[v1];"
+        "[v0][v1]xfade=transition=fade:duration=0.3:offset=3.4[outv]",
         "-map", "[outv]",
         "-t", "7.00",
         "-c:v", "libx264", "-preset", "fast", "-pix_fmt", "yuv420p", "-an",
@@ -162,7 +194,7 @@ def step_3_prepare_background_video(source_clip):
 
 
 def step_4_render_hyperframes(audio_file):
-    log("Step 4: Creating Hyperframes composition and rendering 1080x1920...")
+    log("Step 4: Rendering 2-scene Hyperframes composition...")
     with open(TEMP_DIR / "package.json", "w") as f:
         json.dump({"name": "reel-025", "version": "1.0.0", "private": True}, f)
 
@@ -197,8 +229,8 @@ def step_4_render_hyperframes(audio_file):
       }}
       .cinematic-vignette {{
         position: absolute; inset: 0;
-        background: radial-gradient(circle at 50% 38%, transparent 20%, rgba(0,0,0,0.45) 100%),
-                    linear-gradient(to bottom, rgba(0,0,0,0.3) 0%, transparent 25%, transparent 70%, rgba(0,0,0,0.7) 100%);
+        background: radial-gradient(circle at 50% 38%, transparent 20%, rgba(0,0,0,0.5) 100%),
+                    linear-gradient(to bottom, rgba(0,0,0,0.35) 0%, transparent 25%, transparent 70%, rgba(0,0,0,0.7) 100%);
         pointer-events: none; z-index: 2;
       }}
       /* Bottom Attribution Signature: @unwrittenrules.b3 • Current Book Title */
@@ -248,12 +280,12 @@ def step_4_render_hyperframes(audio_file):
     <script>
       const tl = gsap.timeline({{ paused: true }});
 
-      // Line 1: 0.15s -> 3.20s
+      // Line 1: 0.15s -> 3.20s (Scene 1: Human Grind)
       tl.fromTo("#line1", {{ opacity: 0, y: 14 }}, {{ opacity: 1, y: 0, duration: 0.45, ease: "power2.out" }}, 0.15);
-      tl.to("#line1", {{ opacity: 0, y: -10, duration: 0.35, ease: "power2.in" }}, 3.10);
+      tl.to("#line1", {{ opacity: 0, y: -10, duration: 0.30, ease: "power2.in" }}, 3.10);
 
-      // Line 2: 3.85s -> 6.65s (matches Christopher neural cadence & dramatic pause)
-      tl.fromTo("#line2", {{ opacity: 0, y: 14 }}, {{ opacity: 1, y: 0, duration: 0.45, ease: "power2.out" }}, 3.85);
+      // Line 2: 3.45s -> 6.65s (Scene 2: Automated Machine - locks to 3.4s scene cut)
+      tl.fromTo("#line2", {{ opacity: 0, y: 14 }}, {{ opacity: 1, y: 0, duration: 0.45, ease: "power2.out" }}, 3.45);
       tl.to("#line2", {{ opacity: 0, duration: 0.30, ease: "power2.in" }}, 6.65);
 
       window.__timelines = window.__timelines || {{}};
@@ -301,7 +333,7 @@ def step_4_render_hyperframes(audio_file):
     return final_video, thumbnail
 
 
-def step_5_archive(final_video, thumbnail, raw_voice, mastered_voice, mixed_audio, source_clip):
+def step_5_archive(final_video, thumbnail, audio_master, clip1, clip2):
     target_dir = REELS_DIR / f"{REEL_SPEC['id']}-{REEL_SPEC['slug']}"
     target_dir.mkdir(parents=True, exist_ok=True)
     
@@ -311,7 +343,7 @@ def step_5_archive(final_video, thumbnail, raw_voice, mastered_voice, mixed_audi
     
     shutil.copy(str(final_video), str(archived_video))
     shutil.copy(str(thumbnail), str(archived_thumb))
-    shutil.copy(str(mixed_audio), str(archived_audio))
+    shutil.copy(str(audio_master), str(archived_audio))
     
     with open(target_dir / "script.txt", "w") as f:
         f.write(REEL_SPEC["spoken"] + "\n")
@@ -331,33 +363,50 @@ def step_5_archive(final_video, thumbnail, raw_voice, mastered_voice, mixed_audi
         "script": REEL_SPEC["spoken"],
         "bgm": REEL_SPEC["bgm_track"],
         "voice": "en-US-ChristopherNeural",
-        "footage": source_clip.name,
-        "caption": REEL_SPEC["caption"]
+        "shot1": clip1.name,
+        "shot2": clip2.name,
+        "caption": REEL_SPEC["caption"],
+        "bufferPosts": {
+            "instagram": "6adb261ae2b536ff313ff5eb",
+            "youtube": "6adb2629bab742f874b9f2ab",
+            "tiktok": "6adb262f2baa602d024243b5"
+        },
+        "scheduledDue": {
+            "instagram": "2026-10-26T19:23:00.000Z",
+            "youtube": "2026-10-24T17:05:00.000Z",
+            "tiktok": "2026-10-24T06:44:00.000Z"
+        },
+        "status": "scheduled_in_buffer"
     }
     with open(target_dir / "meta.json", "w") as f:
         json.dump(meta, f, indent=2)
 
-    log(f"Archived final package into {target_dir}")
+    log(f"Archived final 2-shot package into {target_dir}")
     return target_dir, archived_video, meta
 
 
 def step_6_github_upload(archived_video):
-    log("Step 6: Uploading to GitHub media-vault release...")
+    log("Step 6: Re-uploading to GitHub media-vault release (clobber)...")
     asset_name = f"reel_{REEL_SPEC['num']}.mp4"
-    cmd = f"gh release upload media-vault \"{archived_video}#{asset_name}\" --clobber -R bidya271/instagram"
+    temp_upload = Path(f"/tmp/{asset_name}")
+    shutil.copy(str(archived_video), str(temp_upload))
+    cmd = f"gh release upload media-vault \"{temp_upload}\" --clobber -R bidya271/instagram"
     log(f"Running: {cmd}")
     subprocess.run(cmd, shell=True, check=True)
+    temp_upload.unlink(missing_ok=True)
     public_url = f"https://github.com/bidya271/instagram/releases/download/media-vault/{asset_name}"
     log(f"Permanent Media URL: {public_url}")
     return public_url
 
 
-def step_7_move_footage_and_cleanup(source_clip):
-    log("Step 7: Moving source clip to assets/footage/used/ and cleaning temp...")
+def step_7_move_footage_and_cleanup(clip1, clip2):
+    log("Step 7: Moving both source clips to assets/footage/used/ and cleaning temp...")
     USED_DIR.mkdir(parents=True, exist_ok=True)
-    dest = USED_DIR / source_clip.name
-    shutil.move(str(source_clip), str(dest))
-    log(f"Moved {source_clip.name} to {dest}")
+    for c in [clip1, clip2]:
+        dest = USED_DIR / c.name
+        if c.exists():
+            shutil.move(str(c), str(dest))
+            log(f"Moved {c.name} to {dest}")
     
     CLEANUP_TRASH.mkdir(parents=True, exist_ok=True)
     if TEMP_DIR.exists():
@@ -367,15 +416,15 @@ def step_7_move_footage_and_cleanup(source_clip):
 
 
 if __name__ == "__main__":
-    log("Starting Reel 025 Production...")
+    log("Starting 2-Shot Reel 025 Production...")
     TEMP_DIR.mkdir(parents=True, exist_ok=True)
     
-    source_clip = step_1_check_footage()
-    raw_v, mast_v, mix_a = step_2_audio()
-    bg_video = step_3_prepare_background_video(source_clip)
-    final_video, thumbnail = step_4_render_hyperframes(mix_a)
-    target_dir, archived_video, meta = step_5_archive(final_video, thumbnail, raw_v, mast_v, mix_a, source_clip)
+    clip1, clip2 = step_1_check_footage()
+    _, _, audio_master = step_2_audio()
+    bg_video = step_3_prepare_montage(clip1, clip2)
+    final_video, thumbnail = step_4_render_hyperframes(audio_master)
+    target_dir, archived_video, meta = step_5_archive(final_video, thumbnail, audio_master, clip1, clip2)
     public_url = step_6_github_upload(archived_video)
-    step_7_move_footage_and_cleanup(source_clip)
+    step_7_move_footage_and_cleanup(clip1, clip2)
     
-    log("[SUCCESS] Reel 025 Render & Archive Complete!")
+    log("[SUCCESS] 2-Shot Reel 025 Upgrade & GitHub Vault Sync Complete!")
