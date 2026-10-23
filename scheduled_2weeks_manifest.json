@@ -491,5 +491,53 @@
       "youtube": "2026-10-27T15:30:00.000Z",
       "tiktok": "2026-10-26T09:15:00.000Z"
     }
+  },
+  {
+    "id": "reel-024",
+    "slug": "shadows-in-mirror",
+    "title": "Shadows in the Mirror",
+    "book": "The Morality Machine",
+    "scheduledDate": "2026-10-23",
+    "mediaUrl": "https://github.com/bidya271/instagram/releases/download/media-vault/reel_024.mp4",
+    "bufferPosts": {
+      "instagram": "6ad9d493aefa17e341fb3567",
+      "youtube": "6ad9d49931bddaf9c5d106cd",
+      "tiktok": "6ad9d49fe6aee73a2b1624a1"
+    },
+    "scheduledSlots": {
+      "instagram": "2026-10-23T05:59:00.000Z",
+      "youtube": "2026-10-24T17:05:00.000Z",
+      "tiktok": "2026-10-25T08:40:00.000Z"
+    },
+    "audioTrack": "solitude.mp3",
+    "footageClip": "man_looking_window_night_34823191.mp4",
+    "caption": "The hardest truth of human nature:\n\nMild irritation at someone's flaw is normal.\n\nBurning, disproportionate disgust at a specific fault in someone else? That is a diagnostic tell.\n\nThe mind's first defense against impulses you find shameful\u2014greed, cowardice, arrogance, disloyalty\u2014is to repress them. But repressed material requires constant energy to bury.\n\nTo reduce that cost, your brain externalizes the impulse. It hunts for that exact flaw in the outside world and condemns it with righteous fury.\n\nBecause as long as you are busy prosecuting it in someone else, you convince yourself you could never be guilty of it.\n\nThe intensity of your disgust is proportional to what you are burying in yourself.\n\nSave this before you judge someone today.\n\nExplore the hidden architecture of self-exoneration in 'The Morality Machine'.\n\n#themoralitymachine #darkpsychology #psychologicalprojection #humannature #shadowwork #stoicism #unwrittenrules #reels #shorts #psychologyfacts",
+    "status": "scheduled_in_buffer",
+    "duration": 7.0,
+    "spoken": "The flaws that disgust you most in others, are the impulses you fear confronting in yourself."
+  },
+  {
+    "id": "reel-025",
+    "slug": "illusion-of-effort",
+    "title": "The Illusion of Effort",
+    "book": "AI Production Handbook",
+    "scheduledDate": "2026-10-24",
+    "mediaUrl": "https://github.com/bidya271/instagram/releases/download/media-vault/reel_025.mp4",
+    "bufferPosts": {
+      "instagram": "6adb261ae2b536ff313ff5eb",
+      "youtube": "6adb2629bab742f874b9f2ab",
+      "tiktok": "6adb262f2baa602d024243b5"
+    },
+    "scheduledSlots": {
+      "instagram": "2026-10-26T19:23:00.000Z",
+      "youtube": "2026-10-24T17:05:00.000Z",
+      "tiktok": "2026-10-24T06:44:00.000Z"
+    },
+    "audioTrack": "solitude.mp3",
+    "footageClip": "chess_dramatic_dark_7688797.mp4",
+    "caption": "The hardest pill to swallow in the modern workplace:\n\nWe were trained to believe that sweat equals value. We were taught that exhaustion is proof of dedication.\n\nIn the intelligence age, that entire mental model is obsolete.\n\nWhen an autonomous system can execute complex workflows without fatigue, hesitation, or human error, manual effort isn't rewarded. It is diagnosed as an architectural inefficiency.\n\nThe most vulnerable professionals in any organization are never the ones who lack effort. They are the ones whose value depends solely on routine labor.\n\nReal leverage is no longer about how hard you can push. It is about whether you own the systems that do the pushing for you.\n\nSave this before you spend your next 8 hours doing what a system could execute in seconds.\n\nDeconstruct autonomous systems and modern leverage in 'AI Production Handbook'.\n\n#aiproductionhandbook #unwrittenrules #leverage #systems #futureofwork #stoicmindset #humanbehavior #aiagents #reels #shorts #productivity",
+    "status": "scheduled_in_buffer",
+    "duration": 7.0,
+    "spoken": "In an automated world, effort is no longer a virtue. It is an engineering failure."
   }
 ]
