@@ -1,0 +1,52 @@
+{
+  "slug": "feelsright",
+  "input": "FeelsRight - quiet 30-second daily emotional check-in for couples and long distance relationships. Free on iOS. https://feelsright.me",
+  "product_url": "https://feelsright.me",
+  "description": "FeelsRight - quiet 30-second daily emotional check-in for couples and long distance relationships. Free on iOS. https://feelsright.me",
+  "archetype": "intimacy_app",
+  "target_audience": "Couples in long-distance relationships (LDR), busy partners struggling with daily emotional check-ins, intentional relationship builders.",
+  "platforms": [
+    "threads",
+    "reddit",
+    "facebook"
+  ],
+  "subreddits": [
+    "r/relationship_advice",
+    "r/relationships",
+    "r/dating",
+    "r/Marriage",
+    "r/LongDistance",
+    "r/mentalhealth"
+  ],
+  "threads_queries": [
+    "couples check-in app",
+    "long distance relationship communication",
+    "relationship habits daily"
+  ],
+  "facebook_groups": [
+    "Long Distance Relationships (LDR) Support Group",
+    "Couples Seeking Stronger Connection",
+    "Relationship Advice & Marriage Mindset"
+  ],
+  "buying_signals": [
+    "app for couples",
+    "how to improve relationship",
+    "feel disconnected",
+    "struggling to communicate",
+    "daily check-in for couples"
+  ],
+  "pitch_tone": "warm, private, gentle, non-judgmental",
+  "pitch_angle": "A quiet 30-second daily prompt with no streaks, no gamification, and complete privacy.",
+  "pain_keywords": [
+    "relationship",
+    "couple",
+    "partner",
+    "connection",
+    "communication",
+    "therapy",
+    "streak",
+    "feelings",
+    "long distance",
+    "ldr"
+  ]
+}

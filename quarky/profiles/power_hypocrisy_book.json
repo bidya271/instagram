@@ -1,0 +1,53 @@
+{
+  "slug": "power_hypocrisy_book",
+  "input": "The Hidden Games - A non-fiction book exploring human hypocrisy, unspoken power dynamics, and social status signaling",
+  "product_url": "https://power_hypocrisy_book.app",
+  "description": "The Hidden Games - A non-fiction book exploring human hypocrisy, unspoken power dynamics, and social status signaling",
+  "archetype": "nonfiction_book",
+  "target_audience": "Intellectual readers, ambitious operators, founders, psychologists, and thinkers interested in power dynamics, human hypocrisy, and evolutionary sociology.",
+  "platforms": [
+    "reddit",
+    "threads",
+    "facebook"
+  ],
+  "subreddits": [
+    "r/suggestmeabook",
+    "r/booksuggestions",
+    "r/philosophy",
+    "r/psychology",
+    "r/selfimprovement",
+    "r/books"
+  ],
+  "threads_queries": [
+    "books about human nature",
+    "books on power dynamics and psychology",
+    "best non-fiction books 2026"
+  ],
+  "facebook_groups": [
+    "Nonfiction Book Club & Recommendations",
+    "Psychology, Philosophy & Deep Reads",
+    "Books on Power, Strategy & Human Nature"
+  ],
+  "buying_signals": [
+    "what book should I read",
+    "recommend a book about",
+    "books like 48 laws of power",
+    "books about human hypocrisy",
+    "good read on power dynamics"
+  ],
+  "pitch_tone": "intellectual, curiosity-driven, insight-first",
+  "pitch_angle": "Highlight the uncomfortable truth about unspoken status dynamics and moral signaling.",
+  "pain_keywords": [
+    "book",
+    "read",
+    "recommend",
+    "human nature",
+    "power",
+    "psychology",
+    "philosophy",
+    "self-improvement",
+    "hypocrisy",
+    "status games",
+    "machiavellian"
+  ]
+}

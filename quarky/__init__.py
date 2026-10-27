@@ -1,3 +1,1 @@
-"""
-Quarky package initialization.
-"""
+# Quarky package

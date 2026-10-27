@@ -1,144 +1,145 @@
 """
-Quarky Database & State Engine (data/quarky.db)
-Stores leads, intelligence observations, outbox drafts, and push history.
+db.py — SQLite ORM & state engine for Quarky
+Stores leads with recency, archived status, and new-account eligibility.
 """
+import sqlite3, os, uuid
+from datetime import datetime
 
-import os
-import sqlite3
-from datetime import datetime, date
-from typing import List, Dict, Optional
+DB_PATH = os.path.join(os.path.dirname(__file__), "..", "data", "quarky.db")
 
-DB_PATH = "data/quarky.db"
+def _conn():
+    os.makedirs(os.path.dirname(DB_PATH), exist_ok=True)
+    c = sqlite3.connect(DB_PATH)
+    c.row_factory = sqlite3.Row
+    return c
 
-class QuarkyDB:
-    def __init__(self, db_path: str = DB_PATH):
-        self.db_path = db_path
-        os.makedirs(os.path.dirname(self.db_path), exist_ok=True)
-        self._init_db()
+def init_db():
+    with _conn() as c:
+        c.executescript("""
+        CREATE TABLE IF NOT EXISTS leads (
+            lead_id         TEXT PRIMARY KEY,
+            source          TEXT NOT NULL,
+            identifier      TEXT NOT NULL,
+            target_app      TEXT NOT NULL,
+            context_snippet TEXT,
+            status          TEXT DEFAULT 'new',
+            account_safe    INTEGER DEFAULT 1,
+            recency_label   TEXT DEFAULT 'Recent active',
+            is_archived     INTEGER DEFAULT 0,
+            created_at      TEXT DEFAULT (datetime('now'))
+        );
+        CREATE TABLE IF NOT EXISTS outbox (
+            outbox_id   INTEGER PRIMARY KEY AUTOINCREMENT,
+            lead_id     TEXT NOT NULL,
+            target_app  TEXT NOT NULL,
+            channel     TEXT DEFAULT 'chrome_web',
+            pitch_text  TEXT,
+            status      TEXT DEFAULT 'pending_approval',
+            queued_at   TEXT DEFAULT (datetime('now')),
+            sent_at     TEXT,
+            FOREIGN KEY (lead_id) REFERENCES leads(lead_id)
+        );
+        CREATE TABLE IF NOT EXISTS activity_log (
+            id          INTEGER PRIMARY KEY AUTOINCREMENT,
+            lead_id     TEXT,
+            action_type TEXT,
+            details     TEXT,
+            timestamp   TEXT DEFAULT (datetime('now'))
+        );
+        """)
+        # Safe migration if columns don't exist
+        for col, col_def in [
+            ("account_safe", "INTEGER DEFAULT 1"),
+            ("recency_label", "TEXT DEFAULT 'Recent active'"),
+            ("is_archived", "INTEGER DEFAULT 0")
+        ]:
+            try:
+                c.execute(f"ALTER TABLE leads ADD COLUMN {col} {col_def}")
+            except Exception:
+                pass
 
-    def _init_db(self):
-        with sqlite3.connect(self.db_path) as conn:
-            cur = conn.cursor()
-            # 1. B2C Leads
-            cur.execute("""
-                CREATE TABLE IF NOT EXISTS leads (
-                    lead_id TEXT PRIMARY KEY,
-                    source TEXT,                -- 'contact_list', 'reddit', 'threads', 'web'
-                    identifier TEXT,            -- phone number, username, or profile URL
-                    name TEXT,
-                    target_app TEXT,            -- 'tracksub' or 'feelsright'
-                    context_snippet TEXT,       -- their specific complaint or origin
-                    status TEXT DEFAULT 'new',  -- 'new', 'qualified', 'drafted', 'pushed', 'converted'
-                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-                )
-            """)
-            # 2. Outbox (The Decision Desk)
-            cur.execute("""
-                CREATE TABLE IF NOT EXISTS outbox (
-                    outbox_id INTEGER PRIMARY KEY AUTOINCREMENT,
-                    lead_id TEXT UNIQUE,
-                    target_app TEXT,
-                    channel TEXT,               -- 'chrome_web', 'direct_sms', 'direct_dm'
-                    pitch_text TEXT,
-                    status TEXT DEFAULT 'pending_approval', -- 'pending_approval', 'approved', 'rejected', 'sent'
-                    queued_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                    sent_at TIMESTAMP,
-                    FOREIGN KEY(lead_id) REFERENCES leads(lead_id)
-                )
-            """)
-            # 3. Actions & Activity Log
-            cur.execute("""
-                CREATE TABLE IF NOT EXISTS activity_log (
-                    id INTEGER PRIMARY KEY AUTOINCREMENT,
-                    lead_id TEXT,
-                    action_type TEXT,
-                    details TEXT,
-                    timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-                )
-            """)
-            conn.commit()
+def add_lead(source, identifier, target_app, context_snippet, account_safe=1, recency_label='Recent active', is_archived=0):
+    lead_id = str(uuid.uuid4())
+    with _conn() as c:
+        # deduplicate by identifier + target_app
+        existing = c.execute(
+            "SELECT lead_id FROM leads WHERE identifier=? AND target_app=?",
+            (identifier, target_app)
+        ).fetchone()
+        if existing:
+            return existing["lead_id"], False
+        c.execute(
+            """INSERT INTO leads 
+               (lead_id, source, identifier, target_app, context_snippet, account_safe, recency_label, is_archived) 
+               VALUES (?,?,?,?,?,?,?,?)""",
+            (lead_id, source, identifier, target_app, context_snippet, account_safe, recency_label, is_archived)
+        )
+    log_activity(lead_id, "lead_added", f"source={source} app={target_app}")
+    return lead_id, True
 
-    def add_lead(self, lead_id: str, source: str, identifier: str, target_app: str, context_snippet: str = "", name: str = "") -> bool:
-        with sqlite3.connect(self.db_path) as conn:
-            cur = conn.cursor()
-            cur.execute("""
-                INSERT OR IGNORE INTO leads (lead_id, source, identifier, target_app, context_snippet, name)
-                VALUES (?, ?, ?, ?, ?, ?)
-            """, (lead_id, source, identifier, target_app, context_snippet, name))
-            conn.commit()
-            return cur.rowcount > 0
+def get_leads(target_app=None, status=None):
+    with _conn() as c:
+        q = "SELECT * FROM leads WHERE 1=1"
+        params = []
+        if target_app:
+            q += " AND target_app=?"; params.append(target_app)
+        if status:
+            q += " AND status=?"; params.append(status)
+        q += " ORDER BY created_at DESC"
+        return [dict(r) for r in c.execute(q, params).fetchall()]
 
-    def get_leads_needing_pitch(self, limit: int = 50) -> List[Dict]:
-        with sqlite3.connect(self.db_path) as conn:
-            conn.row_factory = sqlite3.Row
-            cur = conn.cursor()
-            cur.execute("""
-                SELECT l.* FROM leads l
-                LEFT JOIN outbox o ON l.lead_id = o.lead_id
-                WHERE o.outbox_id IS NULL AND l.status = 'new'
-                LIMIT ?
-            """, (limit,))
-            return [dict(row) for row in cur.fetchall()]
+def update_lead_status(lead_id, status):
+    with _conn() as c:
+        c.execute("UPDATE leads SET status=? WHERE lead_id=?", (status, lead_id))
 
-    def queue_outbox(self, lead_id: str, target_app: str, channel: str, pitch_text: str):
-        with sqlite3.connect(self.db_path) as conn:
-            cur = conn.cursor()
-            cur.execute("""
-                INSERT OR REPLACE INTO outbox (lead_id, target_app, channel, pitch_text, status)
-                VALUES (?, ?, ?, ?, 'pending_approval')
-            """, (lead_id, target_app, channel, pitch_text))
-            cur.execute("UPDATE leads SET status = 'drafted' WHERE lead_id = ?", (lead_id,))
-            conn.commit()
+def add_outbox(lead_id, target_app, pitch_text, channel="chrome_web"):
+    with _conn() as c:
+        # don't double-queue
+        existing = c.execute(
+            "SELECT outbox_id FROM outbox WHERE lead_id=? AND status='pending_approval'",
+            (lead_id,)
+        ).fetchone()
+        if existing:
+            return existing["outbox_id"]
+        cur = c.execute(
+            "INSERT INTO outbox (lead_id,target_app,channel,pitch_text) VALUES (?,?,?,?)",
+            (lead_id, target_app, channel, pitch_text)
+        )
+        return cur.lastrowid
 
-    def get_pending_outbox(self, limit: int = 50) -> List[Dict]:
-        with sqlite3.connect(self.db_path) as conn:
-            conn.row_factory = sqlite3.Row
-            cur = conn.cursor()
-            cur.execute("""
-                SELECT o.*, l.identifier, l.source, l.context_snippet, l.name
-                FROM outbox o
-                JOIN leads l ON o.lead_id = l.lead_id
-                WHERE o.status = 'pending_approval'
-                ORDER BY o.queued_at ASC
-                LIMIT ?
-            """, (limit,))
-            return [dict(row) for row in cur.fetchall()]
+def get_outbox(target_app=None, status="pending_approval"):
+    with _conn() as c:
+        q = """SELECT o.*, l.source, l.identifier, l.context_snippet, 
+                      l.account_safe, l.recency_label, l.is_archived 
+               FROM outbox o 
+               JOIN leads l ON o.lead_id=l.lead_id 
+               WHERE 1=1"""
+        params = []
+        if target_app:
+            q += " AND o.target_app=?"; params.append(target_app)
+        if status:
+            q += " AND o.status=?"; params.append(status)
+        q += " ORDER BY o.queued_at DESC"
+        return [dict(r) for r in c.execute(q, params).fetchall()]
 
-    def approve_outbox(self, outbox_id: int):
-        with sqlite3.connect(self.db_path) as conn:
-            cur = conn.cursor()
-            cur.execute("UPDATE outbox SET status = 'approved' WHERE outbox_id = ?", (outbox_id,))
-            conn.commit()
+def update_outbox_status(outbox_id, status):
+    sent_at = datetime.utcnow().isoformat() if status == "sent" else None
+    with _conn() as c:
+        if sent_at:
+            c.execute("UPDATE outbox SET status=?,sent_at=? WHERE outbox_id=?", (status, sent_at, outbox_id))
+        else:
+            c.execute("UPDATE outbox SET status=? WHERE outbox_id=?", (status, outbox_id))
 
-    def reject_outbox(self, outbox_id: int):
-        with sqlite3.connect(self.db_path) as conn:
-            cur = conn.cursor()
-            cur.execute("UPDATE outbox SET status = 'rejected' WHERE outbox_id = ?", (outbox_id,))
-            conn.commit()
+def log_activity(lead_id, action_type, details=""):
+    with _conn() as c:
+        c.execute(
+            "INSERT INTO activity_log (lead_id,action_type,details) VALUES (?,?,?)",
+            (lead_id, action_type, details)
+        )
 
-    def mark_sent(self, outbox_id: int):
-        with sqlite3.connect(self.db_path) as conn:
-            cur = conn.cursor()
-            cur.execute("UPDATE outbox SET status = 'sent', sent_at = CURRENT_TIMESTAMP WHERE outbox_id = ?", (outbox_id,))
-            cur.execute("""
-                UPDATE leads SET status = 'pushed'
-                WHERE lead_id = (SELECT lead_id FROM outbox WHERE outbox_id = ?)
-            """, (outbox_id,))
-            conn.commit()
-
-    def count_sent_today(self) -> int:
-        with sqlite3.connect(self.db_path) as conn:
-            cur = conn.cursor()
-            cur.execute("SELECT COUNT(*) FROM outbox WHERE status = 'sent' AND date(sent_at) = date('now')")
-            return cur.fetchone()[0]
-
-    def get_stats(self) -> Dict:
-        with sqlite3.connect(self.db_path) as conn:
-            cur = conn.cursor()
-            cur.execute("SELECT COUNT(*) FROM leads")
-            total_leads = cur.fetchone()[0]
-            cur.execute("SELECT COUNT(*) FROM outbox WHERE status = 'pending_approval'")
-            pending = cur.fetchone()[0]
-            cur.execute("SELECT COUNT(*) FROM outbox WHERE status = 'sent'")
-            sent = cur.fetchone()[0]
-            return {"total_leads": total_leads, "pending_approval": pending, "pushed": sent}
+def get_stats():
+    with _conn() as c:
+        total_leads   = c.execute("SELECT COUNT(*) FROM leads").fetchone()[0]
+        pending       = c.execute("SELECT COUNT(*) FROM outbox WHERE status='pending_approval'").fetchone()[0]
+        sent          = c.execute("SELECT COUNT(*) FROM outbox WHERE status='sent'").fetchone()[0]
+        return {"total_leads": total_leads, "pending": pending, "sent": sent}

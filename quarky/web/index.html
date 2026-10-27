@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quarky — Autonomous B2C GTM & Lead Engine</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="shell">
+  <!-- TOP APP BAR -->
+  <header class="topbar">
+    <div class="brand">
+      <div class="logo-mark">Q</div>
+      <div class="brand-text">
+        <span class="brand-title">Quarky</span>
+        <span class="brand-sub">Autonomous B2C Go-To-Market Engine</span>
+      </div>
+    </div>
+
+    <!-- Active Product Selector Tabs -->
+    <div class="product-tabs" id="product-tabs">
+      <!-- filled by JS -->
+    </div>
+
+    <!-- Stats summary -->
+    <div class="quick-stats">
+      <div class="stat-pill"><span class="dot-green">●</span> <strong id="stat-total">0</strong> Leads</div>
+      <div class="stat-pill stat-accent"><strong id="stat-pending">0</strong> Ready to Push</div>
+      <div class="stat-pill"><strong id="stat-sent">0</strong> Sent</div>
+    </div>
+  </header>
+
+  <!-- NAVIGATION TABS -->
+  <nav class="nav-strip">
+    <button class="nav-tab active" data-view="outbox">
+      <span class="tab-icon">⚡</span>
+      <span class="tab-title">Outreach Queue</span>
+      <span class="tab-badge" id="badge-outbox-count">0</span>
+    </button>
+    <button class="nav-tab" data-view="strategy">
+      <span class="tab-icon">🗺️</span>
+      <span class="tab-title">GTM Intelligence (Whom · Where · How)</span>
+    </button>
+    <button class="nav-tab" data-view="analyze">
+      <span class="tab-icon">➕</span>
+      <span class="tab-title">Analyze Any New Product</span>
+    </button>
+    <button class="nav-tab" data-view="leads">
+      <span class="tab-icon">📋</span>
+      <span class="tab-title">All Harvested Leads</span>
+    </button>
+  </nav>
+
+  <!-- WORKSPACE CONTENT AREA -->
+  <main class="workspace">
+
+    <!-- ── VIEW 1: OUTREACH QUEUE (OUTBOX) ────────────────────────── -->
+    <section class="view active" id="view-outbox">
+      <!-- Account Health & AutoMod Banner -->
+      <div style="background: rgba(16, 185, 129, 0.08); border: 1px solid rgba(16, 185, 129, 0.25); border-radius: 10px; padding: 12px 18px; margin-bottom: 16px; font-size: 12px; color: #6ee7b7; display: flex; align-items: center; justify-content: space-between; gap: 12px;">
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <span style="font-size: 16px;">🛡️</span>
+          <span><strong>New Account Safety Enabled:</strong> Showing unarchived, active threads vetted for a <strong>3-week-old Reddit account</strong> to prevent AutoModerator comment shadowbans.</span>
+        </div>
+        <span style="background: rgba(16, 185, 129, 0.2); border: 1px solid rgba(16, 185, 129, 0.4); padding: 3px 8px; border-radius: 99px; font-size: 11px; font-weight: 700; white-space: nowrap;">● 100% Replyable</span>
+      </div>
+
+      <!-- Action Guide Banner -->
+      <div class="guide-banner">
+        <div class="guide-step">
+          <div class="step-num">1</div>
+          <div class="step-desc"><strong>Review Lead</strong><br>Check what the user is asking and their pain point.</div>
+        </div>
+        <div class="guide-arrow">→</div>
+        <div class="guide-step">
+          <div class="step-num">2</div>
+          <div class="step-desc"><strong>One-Click Push</strong><br>Click <code>Push to Chrome</code> — Chrome activates to that exact thread.</div>
+        </div>
+        <div class="guide-arrow">→</div>
+        <div class="guide-step">
+          <div class="step-num">3</div>
+          <div class="step-desc"><strong>Paste & Convert</strong><br>Pitch is copied to your clipboard. Just hit <code>Cmd+V</code> and send!</div>
+        </div>
+      </div>
+
+      <!-- Controls & Filter Toolbar -->
+      <div class="stream-toolbar">
+        <div class="filter-pills" id="platform-filters">
+          <button class="filter-pill active" data-filter="all">All Platforms</button>
+          <button class="filter-pill" data-filter="reddit">Reddit</button>
+          <button class="filter-pill" data-filter="threads">Threads</button>
+          <button class="filter-pill" data-filter="facebook">Facebook Groups</button>
+        </div>
+        <div class="stream-actions">
+          <button class="btn-tool" id="btn-scout">⚡ Scout More Leads</button>
+          <button class="btn-tool" id="btn-draft">✏️ Redraft Pitches</button>
+          <button class="btn-tool btn-tool-accent" id="btn-run-all">▶ Re-Run Pipeline</button>
+        </div>
+      </div>
+
+      <div class="status-indicator" id="pipeline-status"></div>
+
+      <!-- Live Cards Stream -->
+      <div class="lead-stream" id="outbox-cards">
+        <div class="empty-state">
+          <div class="empty-icon">📭</div>
+          <h3>No Pending Pitches</h3>
+          <p>Click <strong>Scout More Leads</strong> to discover active discussions.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── VIEW 2: GTM INTELLIGENCE (WHOM · WHERE · HOW) ──────────── -->
+    <section class="view" id="view-strategy">
+      <div class="strategy-header">
+        <div>
+          <h2>GTM Intelligence: <span id="strat-slug" class="highlight-text">Product</span></h2>
+          <p class="subtitle" id="strat-desc">Analyzing customer mindset, active discussion channels, and positioning angles.</p>
+        </div>
+        <button class="btn-primary" id="btn-switch-to-queue">Review Live Leads →</button>
+      </div>
+
+      <div class="gtm-grid">
+        <!-- WHOM CARD -->
+        <div class="gtm-card">
+          <div class="gtm-card-icon icon-whom">🎯</div>
+          <h3>WHOM — Target Persona & Mindset</h3>
+          <div class="gtm-block">
+            <label>Ideal Customer Profile (ICP)</label>
+            <p id="strat-audience" class="gtm-value">—</p>
+          </div>
+          <div class="gtm-block">
+            <label>Pain Trigger & Mindset</label>
+            <p id="strat-pain" class="gtm-value">—</p>
+          </div>
+          <div class="gtm-block">
+            <label>Archetype Classification</label>
+            <span class="badge-archetype" id="strat-archetype">utility_app</span>
+          </div>
+        </div>
+
+        <!-- WHERE CARD -->
+        <div class="gtm-card">
+          <div class="gtm-card-icon icon-where">📍</div>
+          <h3>WHERE — Live Communities</h3>
+          <div class="gtm-block">
+            <label>Platforms</label>
+            <div id="strat-platforms" class="chips-row"></div>
+          </div>
+          <div class="gtm-block">
+            <label>Target Subreddits (Reddit)</label>
+            <div id="strat-subreddits" class="chips-row"></div>
+          </div>
+          <div class="gtm-block">
+            <label>Threads Topics & Facebook Groups</label>
+            <div id="strat-communities" class="chips-row"></div>
+          </div>
+        </div>
+
+        <!-- HOW CARD -->
+        <div class="gtm-card">
+          <div class="gtm-card-icon icon-how">💡</div>
+          <h3>HOW — Positioning & Pitch Strategy</h3>
+          <div class="gtm-block">
+            <label>Conversation Tone</label>
+            <p id="strat-tone" class="gtm-value">—</p>
+          </div>
+          <div class="gtm-block">
+            <label>Tactical Value Proposition / Hook</label>
+            <p id="strat-angle" class="gtm-value text-green">—</p>
+          </div>
+          <div class="gtm-block">
+            <label>Product Landing Link</label>
+            <a id="strat-link" class="product-direct-link" href="#" target="_blank">—</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── VIEW 3: ANALYZE NEW PRODUCT ────────────────────────────── -->
+    <section class="view" id="view-analyze">
+      <div class="analyze-container">
+        <div class="analyze-card">
+          <h2>Analyze Any Product into a GTM Engine</h2>
+          <p class="subtitle">Enter any product URL (e.g. <code>https://tracksub.app</code>) or describe what you want to sell (e.g. a book on human hypocrisy, a fitness app, or a SaaS tool).</p>
+          
+          <div class="form-group">
+            <label>Product Description or Landing Page URL</label>
+            <textarea id="product-input" rows="3" placeholder="e.g. TrackSub – subscription tracker app with AI screenshot import and no bank logins. https://tracksub.app"></textarea>
+          </div>
+
+          <div class="form-group">
+            <label>Identifier Slug (Optional)</label>
+            <input type="text" id="product-slug" placeholder="e.g. tracksub, feelsright, power_book">
+          </div>
+
+          <button class="btn-primary btn-large" id="btn-run-analyze">
+            ⚡ Generate GTM Blueprint & Scout Leads →
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── VIEW 4: ALL LEADS TABLE ────────────────────────────────── -->
+    <section class="view" id="view-leads">
+      <div class="leads-header">
+        <h2>All Harvested Leads</h2>
+        <span class="muted" id="leads-total-count">0 total prospects discovered</span>
+      </div>
+      <div class="table-card">
+        <table class="leads-table">
+          <thead>
+            <tr>
+              <th>Platform</th>
+              <th>Discussion Context</th>
+              <th>Status</th>
+              <th>Thread Link</th>
+              <th>Discovered</th>
+            </tr>
+          </thead>
+          <tbody id="leads-table-body">
+            <!-- filled by JS -->
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<!-- TOAST NOTIFICATIONS -->
+<div class="toast" id="toast"></div>
+
+<script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,51 @@
+{
+  "slug": "tracksub",
+  "input": "TrackSub - subscription tracker app with AI screenshot import and no bank logins. https://tracksub.app",
+  "product_url": "https://tracksub.app",
+  "description": "TrackSub - subscription tracker app with AI screenshot import and no bank logins. https://tracksub.app",
+  "archetype": "utility_app",
+  "target_audience": "Budget-conscious consumers, tech workers, digital nomads, and people fatigued by subscription leakages.",
+  "platforms": [
+    "reddit",
+    "threads",
+    "facebook"
+  ],
+  "subreddits": [
+    "r/personalfinance",
+    "r/frugal",
+    "r/financialindependence",
+    "r/androidapps",
+    "r/iosapps",
+    "r/mildlyinfuriating"
+  ],
+  "threads_queries": [
+    "subscription tracker app",
+    "forgot to cancel subscription",
+    "best app to track bills"
+  ],
+  "facebook_groups": [
+    "Personal Finance & Budgeting Hacks",
+    "Frugal Living Tips & Deals",
+    "App Addicts & Lifehacks"
+  ],
+  "buying_signals": [
+    "recommend an app for tracking",
+    "best app to manage",
+    "struggling to keep track",
+    "alternative to",
+    "cancel forgotten subscriptions"
+  ],
+  "pitch_tone": "empathetic, practical, zero-fluff, peer-to-peer recommendation",
+  "pitch_angle": "Focus on zero-friction screenshot import without giving away bank passwords.",
+  "pain_keywords": [
+    "subscription",
+    "bills",
+    "track",
+    "expense",
+    "budget",
+    "cancel",
+    "overspend",
+    "money",
+    "receipt"
+  ]
+}

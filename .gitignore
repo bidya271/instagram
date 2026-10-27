@@ -73,3 +73,13 @@ temp_viral_7s/
 test_renders/
 ref_analysis/
 ref_frames/
+
+# Audio / media scratches
+*.m4a
+
+# Temp renders and test artifact directories
+temp_creator_critic/
+temp_next_3/
+temp_render_*/
+test_cartoon_reel/
+test_editorial_*/
